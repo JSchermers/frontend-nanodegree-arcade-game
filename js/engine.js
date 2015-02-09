@@ -1,3 +1,5 @@
+'use strict';
+
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -14,6 +16,7 @@
  * a little simpler to work with.
  */
 
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -27,6 +30,7 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
+    canvas.id = 'gameCanvas';
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -57,7 +61,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -80,7 +84,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
+
     }
 
     /* This is called by the update function  and loops through all of the
@@ -93,6 +97,7 @@ var Engine = (function(global) {
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
+            player.checkCollisions(enemy, player.collision);
         });
         player.update();
     }

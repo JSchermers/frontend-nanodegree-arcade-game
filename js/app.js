@@ -1,7 +1,7 @@
 'use strict';
 
 // Enemies our player must avoid
-var Enemy = function(x, y, speed) {
+var Enemy = function(x, y, speed, collisionArea ) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -19,19 +19,17 @@ Enemy.prototype.update = function(dt) {
  // You should multiply any movement by the dt parameter
 // which will ensure the game runs at the same speed for
 // all computers.
-// *Set coordinates for collision detection
-    this.x = this.x + 1;
+    var canvas = getCanvas('gameCanvas');
 
-    // If the enemy is on screen, move him at a rate multiplied
-    // by dt and by the level (to increase game difficulty)
-    if (this.x < 707) {
-    this.x += 100 * dt * this.speed;
+    if (this.x < canvas.width) {
+        this.x += 100 * dt * this.speed;
     }
     // When the enemy runs off the screen, move him to the other
     // side to start over
     else {
         this.x = 0;
-        this.speed = getRandomInt(1,5) * .5;
+        this.speed = getRandomInt(1, 5) * .5;
+        this.y = getRandomInt(60, 230);
     }
 };
 
@@ -43,46 +41,48 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(x, y) {
+var Player = function(x, y, collision) {
     this.sprite = 'images/char-cat-girl.png';
     this.x = x;
     this.y = y;
-    this.render = function(dt) {
+    this.collision = collision;
+}
+
+Player.prototype.render = function(dt) {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-    this.handleInput = function(action) {
-            if (action === 'up') {
-                console.log("up");
+    };
+Player.prototype.handleInput = function(direction) {
+        var canvas = getCanvas('gameCanvas');
+            if (direction === 'up') {
+
                 this.y -= 82;
                 }
-                if (action === 'down') {
-                if (this.y < 350){
+                if (direction === 'down') {
+                if (this.y < canvas.height - 210){
                 this.y += 82;
                 }
                 }
-                if (action === 'left') {
+                if (direction === 'left') {
                 if (this.x > 1){
                 this.x -= 101;
                 }
                 }
-                if (action === 'right') {
-                if (this.x < 606) {
+                if (direction === 'right') {
+                if (this.x < canvas.width - 105) {
                 this.x += 101;
                 }
         }
     };
-    this.update = function(dt) {
+Player.prototype.update = function(dt) {
 
     };
 
-};
 
-var checkCollisions = function(){
-
-    console.log("boo");
-};
-
-
+Player.prototype.checkCollisions = function(enemy, collision){
+    if(Math.abs(this.x - enemy.x) <= collision && Math.abs(this.y - enemy.y <= collision)){
+        console.log('boom');
+    }
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -92,20 +92,21 @@ var i = 0;
 while (i < 3){
     var x = 0,
         y = getRandomInt(60, 230),
+
         speed = getRandomInt(1,7) * .5,
         enemy = new Enemy(x, y , speed);
-        console.log(y);
 
     allEnemies.push(enemy);
     i++;
-};
+}
 
-
-var player = new Player(400, 400);
+var collision = 20;
+var player = new Player(400, 400, collision);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
+    //used e.which check for Firefox
     var keyCode = (e.which) ? e.which : e.keyCode,
         allowedKeys = {
             37: 'left',
@@ -117,6 +118,14 @@ document.addEventListener('keyup', function(e) {
         player.handleInput(allowedKeys[keyCode]);
         });
 
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// Helper method to get the canvas
+function getCanvas(id) {
+    var c = document.getElementById(id);
+    return c;
 }
