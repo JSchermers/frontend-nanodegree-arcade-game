@@ -49,8 +49,10 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+
         update(dt);
         render();
+
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -69,6 +71,13 @@ var Engine = (function(global) {
      */
     function init() {
         reset();
+        var startText = game.levelText(game.level, 'Get accross the road and watch the enemies');
+        helper.createDocumentElement('body', 'p', 'start-text', startText);
+
+        setTimeout(function(){
+            helper.removeText('start-text');
+        }, 3000);
+
         lastTime = Date.now();
         main();
     }
@@ -143,6 +152,7 @@ var Engine = (function(global) {
 
 
         renderEntities();
+
     }
 
     /* This function is called by the render function and is called on each game
@@ -165,7 +175,14 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        // Store the current transformation matrix
+        ctx.save();
+        // Use the identity matrix while clearing the canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Restore the transform
+        ctx.restore();
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -187,4 +204,6 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    //bind init function to window so to call it after
+    global.init = init;
 })(this);

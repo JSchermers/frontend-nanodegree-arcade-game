@@ -1,3 +1,65 @@
 body {
     text-align: center;
 }
+
+p, span {
+	color: red;
+	font: 30px Verdana;
+}
+
+canvas ~ p {
+	width: 500px;
+	margin: -350px auto 0;
+
+}
+
+.fadeOut {
+	opacity:1;
+	animation: fadeOut 2s forwards;
+}
+
+.meta {
+	width: 500px;
+	margin: 0 auto;
+	position: relative;
+	text-align: left;
+}
+
+.level > span {
+	font-weight: bold;
+	display: inline-block;
+	position: absolute;
+}
+
+.scaleUp {
+	animation: scaleUp 1s;
+}
+
+.lives {
+	display: inline-block;
+	margin-left: 50%;
+}
+
+
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes scaleUp {
+	0% {
+		transform: scale(1,1);
+	}
+	80% {
+		transform: scale(1.5, 1.5);
+	}
+	100% {
+		transform: scale(1, 1);
+	}
+}
+
