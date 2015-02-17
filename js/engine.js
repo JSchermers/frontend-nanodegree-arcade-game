@@ -49,10 +49,10 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-
+            if(game.playerSet){
         update(dt);
         render();
-
+}
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -70,13 +70,12 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
-        var startText = game.levelText(game.level, 'Get accross the road and watch the enemies');
-        helper.createDocumentElement('body', 'p', 'start-text', startText);
+        if(!game.playerSet) {
+            choosePlayer();
+        }
 
-        setTimeout(function(){
-            helper.removeText('start-text');
-        }, 3000);
+        reset();
+
 
         lastTime = Date.now();
         main();
@@ -185,6 +184,55 @@ var Engine = (function(global) {
         ctx.restore();
     }
 
+    function choosePlayer() {
+        var playerImages = [
+            'images/char-boy.png',
+            'images/char-cat-girl.png',
+            'images/char-horn-girl.png',
+            'images/char-pink-girl.png',
+            'images/char-princess-girl.png'
+            ];
+
+        helper.createDocumentElement('body', 'div', 'select-players', 'select-players');
+        var selectPlayer = helper.getDomElement('select-players');
+
+        for(var i = 0; i < playerImages.length; i++) {
+            selectPlayer.appendChild(Resources.get(playerImages[i]));
+        }
+
+        //get all imgs
+        var allPlayerImgs = document.getElementsByTagName('img');
+
+        for(var image = 0; image < allPlayerImgs.length; image++) {
+            //attach eventlistener to all images
+            allPlayerImgs[image].addEventListener('click', selectPlayerNow, false);
+        }
+
+
+
+    }
+
+    function selectPlayerNow() {
+        var playerFullUrl = this.src,
+            playerIndx = playerFullUrl.indexOf('images'),
+            playerSubUrl = playerFullUrl.slice(playerIndx, playerFullUrl.length);
+
+        //set player source
+        player.sprite = playerSubUrl;
+        //player selected
+        game.playerSet = true;
+        addGameDescription();
+    }
+
+    function addGameDescription() {
+         var startText = game.levelText(game.level, 'Get accross the road and watch the enemies');
+        helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startText);
+
+        setTimeout(function(){
+            helper.removeText('start-text');
+        }, 3000);
+    }
+
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
@@ -195,7 +243,10 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/char-cat-girl.png'
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png'
     ]);
     Resources.onReady(init);
 

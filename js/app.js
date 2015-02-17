@@ -41,12 +41,17 @@ var helper = {
         var canvas = document.getElementById(id);
         return canvas;
     },
-    createDocumentElement : function(appendTo, el, id, text) {
+    createDocumentElement : function(appendTo, el, id, cssClass, text) {
         var appendTo = document.getElementById(appendTo);
         var docfrag = document.createDocumentFragment();
         var el = document.createElement(el);
         el.id = id;
-        el.innerHTML = text;
+        if(text){
+            el.innerHTML = text;
+        }
+        if(cssClass) {
+            el.classList.add(cssClass);
+        }
         docfrag.appendChild(el);
         appendTo.appendChild(docfrag);
     },
@@ -77,6 +82,7 @@ var game = {
     level : 1,
     lives : 3,
     points : 1,
+    playerSet : false,
     primMessageColor : 'red',
     primFont : '60px Calibri',
     secMessageColor : 'blue',
@@ -136,7 +142,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function(x, y, collision) {
-    this.sprite = 'images/char-cat-girl.png';
+    this.sprite = '';
     this.width = 80;
     this.height = 171;
     this.x = x;
