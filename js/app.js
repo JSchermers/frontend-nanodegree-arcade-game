@@ -41,26 +41,34 @@ var helper = {
         var canvas = document.getElementById(id);
         return canvas;
     },
-    createDocumentElement : function(appendTo, el, id, cssClass, text) {
-        var appendTo = document.getElementById(appendTo);
+    createDocumentElement : function(append, el, id, cssClass, text) {
+        var appendTo = document.getElementById(append);
         var docfrag = document.createDocumentFragment();
-        var el = document.createElement(el);
-        el.id = id;
+        var elm = document.createElement(el);
+        elm.id = id;
         if(text){
-            el.innerHTML = text;
+            elm.innerHTML = text;
         }
         if(cssClass) {
-            el.classList.add(cssClass);
+            elm.classList.add(cssClass);
         }
-        docfrag.appendChild(el);
+        docfrag.appendChild(elm);
         appendTo.appendChild(docfrag);
     },
-    removeText : function(el) {
+    removeTextSlow : function(el) {
         var el = document.getElementById(el);
         el.classList.add('fadeOut');
     },
+    removeText: function(el) {
+        var el = document.getElementById(el);
+        el.parentNode.removeChild(el);
+    },
     setInnerText : function(el, text) {
         el.innerHTML = text;
+    },
+    showElement: function(el) {
+            var elm = this.getDomElement(el);
+            elm.classList.add('fadeIn');
     },
     getDomElement : function(el) {
         var elm = document.getElementById(el);
@@ -88,8 +96,8 @@ var game = {
     secMessageColor : 'blue',
     secFont : '14px Verdana',
     levelText : function(level, text){
-        var text = text ? text : 'Get to the Chopper',
-        totalText = 'Level ' + level + ' ' + text;
+        var textEl = text ? text : 'Get to the Chopper',
+        totalText = 'Level ' + level + ' ' + textEl;
         return totalText;
 
     },
@@ -167,7 +175,7 @@ Player.prototype.render = function(dt) {
 };
 Player.prototype.handleInput = function(direction) {
         var canvas = helper.getCanvas('gameCanvas'),
-            level = helper.getDomElement('level-number'),
+            level = helper.getDomElement('level-number') || 1,
             startText = helper.getDomElement('start-text'),
             config = { attributes: false, childList: true, characterData: true, characterOldData: true },
             newValue = '',

@@ -52,7 +52,7 @@ var Engine = (function(global) {
             if(game.playerSet){
         update(dt);
         render();
-}
+        }
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -194,6 +194,8 @@ var Engine = (function(global) {
             ];
 
         helper.createDocumentElement('body', 'div', 'select-players', 'select-players');
+        helper.createDocumentElement('select-players', 'p', 'select-players-text', 'select-players-text', 'Select a player to play the game');
+
         var selectPlayer = helper.getDomElement('select-players');
 
         for(var i = 0; i < playerImages.length; i++) {
@@ -221,16 +223,20 @@ var Engine = (function(global) {
         player.sprite = playerSubUrl;
         //player selected
         game.playerSet = true;
+        helper.removeText('select-players');
         addGameDescription();
     }
 
     function addGameDescription() {
-         var startText = game.levelText(game.level, 'Get accross the road and watch the enemies');
-        helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startText);
+        var startGameText = game.levelText(game.level, 'Get accross the road and watch the enemies');
+        helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startGameText);
 
         setTimeout(function(){
-            helper.removeText('start-text');
+            helper.removeTextSlow('start-text');
         }, 3000);
+        if(game.playerSet) {
+            helper.showElement('meta');
+        }
     }
 
     /* Go ahead and load all of the images we know we're going to need to

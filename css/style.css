@@ -18,11 +18,16 @@ canvas ~ p {
 	animation: fadeOut 2s forwards;
 }
 
+.fadeIn {
+	animation: fadeIn 2s forwards;
+}
+
 .meta {
 	width: 500px;
 	margin: 0 auto;
 	position: relative;
 	text-align: left;
+	opacity: 0;
 }
 
 .level > span {
@@ -40,6 +45,19 @@ canvas ~ p {
 	margin-left: 50%;
 }
 
+.select-players {
+	width: 550px;
+	margin:-450px auto 0 auto;
+	border: 1px solid #efefef;
+	box-shadow: 1px 1px 5px #000
+}
+
+.select-players img {
+	cursor: pointer;
+}
+
+
+
 
 
 @keyframes fadeOut {
@@ -48,6 +66,15 @@ canvas ~ p {
 	}
 	to {
 		opacity: 0;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
 	}
 }
 
