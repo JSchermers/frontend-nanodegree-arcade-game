@@ -223,7 +223,7 @@ var Engine = (function(global) {
         player.sprite = playerSubUrl;
         //player selected
         game.playerSet = true;
-        helper.removeText('select-players');
+        helper.removeEl('select-players');
         addGameDescription();
     }
 
@@ -232,7 +232,7 @@ var Engine = (function(global) {
         helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startGameText);
 
         setTimeout(function(){
-            helper.removeTextSlow('start-text');
+            helper.removeElSlow('start-text');
         }, 3000);
         if(game.playerSet) {
             helper.showElement('meta');

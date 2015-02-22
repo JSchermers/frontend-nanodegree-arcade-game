@@ -49,11 +49,17 @@ canvas ~ p {
 	width: 550px;
 	margin:-450px auto 0 auto;
 	border: 1px solid #efefef;
-	box-shadow: 1px 1px 5px #000
+	box-shadow: 1px 1px 5px #000;
+	position: relative;
+	z-index: 99;
 }
 
-.select-players img {
+.select-players > img {
 	cursor: pointer;
+}
+
+.select-players > img:hover {
+	transform: translateY(-10px);
 }
 
 
