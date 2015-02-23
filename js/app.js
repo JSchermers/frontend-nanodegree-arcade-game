@@ -82,22 +82,22 @@ var helper = {
         return elm;
     },
     upDateAnim : function(el, cl) {
-        if(el.classList !== 0) {
-            el.classList.remove(cl);
+        if(el !== null) {
+            if(el.classList !== 0) {
+             el.classList.remove(cl);
         }
         setTimeout(function(){
            el.classList.add(cl);
        }, 1000);
     }
+    }
 };
 
 var game = {
     gameOver : false,
-    score : 0,
     level : 1,
-    lives : 1,
-    points : 1,
-    win : 3,
+    lives : 3,
+    win : 2,
     numberLives: '',
     playerSet : false,
     gameOverText : 'Game over',
@@ -113,9 +113,6 @@ var game = {
 
     },
     moreText : 'One enemy added',
-    init : function(){
-
-    },
     //start game with 3 enemies
     gameSettings : function(gameLevel, collision) {
         var collisionPlayer = collision || 20,
@@ -139,22 +136,40 @@ var game = {
             player = new Player(400, 400, collisionPlayer);
             }
 
-            //when levelnumber adds, a new enemy is added to the game, who is faster
+            //when levelnumber adds, a new enemy is added to the game, who is faster and collision
+            //of the player is bigger.
             else {
                     speedfactor += 5;
-                    player.collision += 5;
-                    y = helper.getRandomInt(80, 210);
+                    player.collision += 4;
+                    y = helper.getRandomInt(60, 70);
                     speed = helper.getRandomInt(1,7) * 0.5;
-                    enemy = new BigEnemy(x, y ,speed, speedfactor);
-                    allEnemies.push(enemy);
+                    bigEnemy = new BigEnemy(x, y ,speed, speedfactor);
+                    allEnemies.push(bigEnemy);
             }
 
-
     },
+    drawStartNewGame : function() {
+        var canvas = helper.getDomElement('gameCanvas'),
+            button = new Button(canvas.width/2 - 70, canvas.height/1.8, 140, 60);
+        button.draw(10, true, true);
+        button.text(game.secFont, game.secMessageColor, 'Start new game!');
+        canvas.addEventListener('click', function(e) {
+            var clickedX = e.pageX - this.offsetLeft,
+                clickedY = e.pageY - this.offsetTop;
+
+                if(clickedX > button.xPos && clickedX < button.xPos + button.width &&
+                    clickedY > button.yPos && clickedY < button.yPos + button.height) {
+                    location.reload();
+                    e.target.style.cursor = 'pointer';
+                }
+        }, false);
+    }
+
 };
 
 // Enemies our player must avoid
-var Enemy = function(x, y, speed, speedfactor) {
+// function name added so you van look it up with constructor.name
+var Enemy = function Enemy(x, y, speed, speedfactor) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
@@ -189,20 +204,23 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    if(this instanceof Enemy) {
+    //check constructor name to render different enemie objects
+    if(this.constructor.name === 'Enemy') {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
-    if(this instanceof BigEnemy) {
+    //check constructor name to render different enemie objects
+    if(this.constructor.name === 'BigEnemy') {
         ctx.save();
         ctx.scale(1.2,1.2);
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
         ctx.restore();
     }
 
+
 };
 
 //avoid BigEnemy
-var BigEnemy = function(x, y, speed, speedfactor) {
+var BigEnemy = function BigEnemy(x, y, speed, speedfactor) {
     //call parent function
     Enemy.call(this, x, y, speed, speedfactor);
 };
@@ -225,6 +243,7 @@ var Player = function(x, y, collision) {
 
 Player.prototype.render = function() {
     var canvas = helper.getCanvas('gameCanvas');
+
         if (game.gameOver === false) {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
@@ -233,12 +252,14 @@ Player.prototype.render = function() {
         //redraw whole canvas
         helper.redraw(0, 0, canvas.width, canvas.height);
         helper.setText(game.gameOverText, canvas.width, canvas.height, game.primMessageColor, game.primFont);
+        game.drawStartNewGame();
     }
 
     if (game.level === game.win) {
         helper.redraw(0, 0, canvas.width, canvas.height);
         helper.setText(game.gameWinText, canvas.width, canvas.height, game.primMessageColor, game.primFont);
         helper.removeEl('meta');
+        game.drawStartNewGame();
      }
 };
 Player.prototype.handleInput = function(direction) {
@@ -254,7 +275,7 @@ Player.prototype.handleInput = function(direction) {
                             newValue = mutation.target.innerHTML;
 
                             if (newValue !== startValue && game.level < game.win ) {
-                                text = game.levelText(newValue, 'Watch out for them new ones');
+                                text = game.levelText(newValue, 'Watch out for them new ones and more collision');
                                 helper.setInnerText(startText, text);
                                 helper.upDateAnim(startText, 'fadeOut');
                                 startValue = newValue;
@@ -310,8 +331,6 @@ Player.prototype.checkCollisions = function(enemy, collision){
             game.numberLives.innerHTML = game.lives;
             player.setPosition(400, 400);
             helper.upDateAnim(game.numberLives, 'scaleUp');
-
-
         }
     }
 };
@@ -319,6 +338,58 @@ Player.prototype.checkCollisions = function(enemy, collision){
 Player.prototype.setPosition = function(x, y){
    this.x = x;
    this.y = y;
+};
+
+var Button = function Button(x, y, width, height) {
+    this.xPos = x;
+    this.yPos = y;
+    this.width = width;
+    this.height = height;
+};
+
+/* Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Number} x The top left x coordinate
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
+ * @param {Number} height The height of the rectangle
+ * @param {Number} radius The corner radius. Defaults to 5;
+ * @param {Boolean} fill Whether to fill the rectangle. Defaults to false.
+ * @param {Boolean} stroke Whether to stroke the rectangle. Defaults to true.
+ */
+Button.prototype.draw = function(radius, fill, stroke){
+    if (typeof stroke == 'undefined') {
+            stroke = true;
+    }
+    if (typeof radius === 'undefined') {
+        radius = 5;
+    }
+    ctx.beginPath();
+    ctx.moveTo(this.xPos + radius, this.yPos);
+    ctx.lineTo(this.xPos + this.width - radius, this.yPos);
+    ctx.quadraticCurveTo(this.xPos + this.width, this.yPos, this.xPos + this.width, this.yPos + radius);
+    ctx.lineTo(this.xPos + this.width, this.yPos + this.height - radius);
+    ctx.quadraticCurveTo(this.xPos + this.width, this.yPos + this.height, this.xPos + this.width - radius, this.yPos + this.height);
+    ctx.lineTo(this.xPos + radius, this.yPos + this.height);
+    ctx.quadraticCurveTo(this.xPos, this.yPos + this.height, this.xPos, this.yPos + this.height - radius);
+    ctx.lineTo(this.xPos, this.yPos + radius);
+    ctx.quadraticCurveTo(this.xPos, this.yPos, this.xPos + radius, this.yPos);
+    ctx.closePath();
+    if (stroke) {
+        ctx.stroke();
+    }
+    if (fill) {
+        ctx.fill();
+    }
+};
+
+Button.prototype.text = function(font, color, text) {
+    var height = this.yPos + this.height / 2 + 4;
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.fillText(text, this.xPos + 10, height);
 };
 
 
@@ -331,6 +402,7 @@ Player.prototype.setPosition = function(x, y){
 var allEnemies = [];
 var player = null;
 var enemy = null;
+var bigEnemy = null;
 game.gameSettings(game.level);
 
 // This listens for key presses and sends the keys to your

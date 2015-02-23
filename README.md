@@ -11,3 +11,4 @@ for self-checking their submission.
 *	[mdn]{https://developer.mozilla.org/nl/docs/Web/JavaScript/ "Javascript"}
 *	[Paciello group]{http://www.paciellogroup.com/blog/2015/02/html5-canvas-sub-dom/ "Accessible canvas"} - did not implement because canvas was dynamically added.
 *	[Addy Osmani - mutation observers]{http://addyosmani.com/blog/mutation-observers/}
+*	[StackOverflow - contructor.name]{http://stackoverflow.com/questions/3905144/how-to-retrieve-the-constructors-name-in-javascript}
