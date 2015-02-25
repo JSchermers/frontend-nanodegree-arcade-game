@@ -225,10 +225,10 @@ var Engine = (function(global) {
         helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startGameText);
 
         setTimeout(function(){
-            helper.removeElSlow('start-text');
+            helper.setClass('start-text', 'fadeOut');
         }, 3000);
         if(game.playerSet) {
-            helper.showElement('meta');
+            helper.setClass('meta', 'fadeIn');
         }
     }
 

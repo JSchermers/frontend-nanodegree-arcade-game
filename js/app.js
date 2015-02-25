@@ -1,9 +1,22 @@
 'use strict';
+
+/*
+ * helper object. Every 'generic' function is stored in the helper object even when some of the
+ * functions are being used only once
+ */
 var helper = {
+    /* Draws the canvas again and manipulates every pixel.
+     * Copied from udacity course.
+     * @param {Number} x The top left x coordinate
+     * @param {Number} y The top left y coordinate
+     * @param {Number} width The width of the canvas
+     * @param {Number} height The height of the canvas
+     */
     redraw : function(x, y, width, height) {
-    var r, g, b, a, pixel, imageData, numPixels;
-        imageData = ctx.getImageData(x, y, width, height);
-        numPixels = imageData.data.length / 4;
+        var r, g, b, a, pixel, imageData, numPixels;
+            imageData = ctx.getImageData(x, y, width, height);
+            numPixels = imageData.data.length / 4;
+
         for (var i = 0 ; i < numPixels ; i++) {
             r = imageData.data[i * 4 + 0];
             g = imageData.data[i * 4 + 1];
@@ -15,81 +28,139 @@ var helper = {
             imageData.data[i * 4 + 0] = pixel.b;
             imageData.data[i * 4 + 0] = pixel.a;
         }
+
         ctx.putImageData(imageData, x, y);
     },
+    /* Draws the gameOver canvas. First saves current state. Rotates the canvas,
+     * draws the player image and restores state
+     * @param {String} image The player image to draw
+     * @param {Number} x The x coordinate of the player
+     * @param {Number} y The y coordinate of the player
+     * @param {Number} angle The angle to rotate the image
+     * @param {Number} width The width of the player object
+     * @param {Number} height The height of the player object
+     */
     drawGameOver : function(image, x, y, angle, width, height) {
-        var toRadians = Math.PI / 180;
-            ctx.save();
-            ctx.translate(x + 90, y + 90);
-            ctx.rotate(angle * Math.PI/180);
-            ctx.drawImage(image, -(width / 2), -(height / 2));
-            ctx.restore();
+        ctx.save();
+        ctx.translate(x + 90, y + 90);
+        ctx.rotate(angle * Math.PI/180);
+        ctx.drawImage(image, -(width / 2), -(height / 2));
+        ctx.restore();
     },
+    /*
+     * Draws text on the canvas on a set position
+     * @param {String} text The text to draw
+     * @param {Number} x The x start position of the text
+     * @param {Number} y The y start position of the text
+     * @param {String} color The color the text to draw
+     * @param {String} font The font size and font family
+     */
     setText : function(text, x, y, color, font) {
         ctx.font = font;
         ctx.fillStyle = color;
         ctx.fillText(text, x / 4, y / 2);
     },
+    /*
+     * Returns a random integer between min (included) and max (excluded)(from Mozilla)
+     * @param {Number} min The minimum number (included)
+     * @param {Number} mx The maximim number (excluded)
+     */
     getRandomInt : function(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
     },
+    /*
+     * Make every pixel gray. From Udacity course
+     * @param {Number} r The red value
+     * @param {Number} g The green value
+     * @param {Number} b The blue value
+     * @param {Number} a The aplha value
+     */
     makePixelGreyScale : function(r, g, b, a){
-                        var y = (0.3 * r) + (0.59 * g) + (0.11 * b);
-                        return {r: y, g: y, b: y, a: y};
-                    },
-    getCanvas : function(id) {
-        var canvas = document.getElementById(id);
-        return canvas;
+        var y = (0.3 * r) + (0.59 * g) + (0.11 * b);
+        return {r: y, g: y, b: y, a: a};
     },
+    /*
+     * Creates dom element via document fragment
+     * @param {String} append The element the dom element should be attached to
+     * @param {String} el The element to create
+     * @param {String} id The id set on the new element
+     * @param {String} cssClass The .class set on the new element
+     * @param {String} text The text to be set in the dom element
+     */
     createDocumentElement : function(append, el, id, cssClass, text) {
-        var appendTo = document.getElementById(append);
-        var docfrag = document.createDocumentFragment();
-        var elm = document.createElement(el);
+        var appendTo = document.getElementById(append),
+            docfrag = document.createDocumentFragment(),
+            elm = document.createElement(el);
+
         elm.id = id;
+
         if(text){
             elm.innerHTML = text;
         }
+
         if(cssClass) {
             elm.classList.add(cssClass);
         }
         docfrag.appendChild(elm);
         appendTo.appendChild(docfrag);
     },
-    removeElSlow : function(el) {
+    /*
+     * Sets a class on a given element
+     * @param {String} id The element the .class is set
+     * @param {String} cssClass The classname to be added;
+     */
+    setClass : function(el, cssClass) {
         var elm = document.getElementById(el);
-        elm.classList.add('fadeOut');
+        elm.classList.add(cssClass);
     },
+    /*
+     * Removes a document element on a given id
+     * @param {String} id The element that sould be removed
+     */
     removeEl: function(el) {
-        //because of repeating code check if element is null, so
+        // because of repeating code check if element is not null
         var elm = document.getElementById(el);
         if(elm !== null) {
             elm.parentNode.removeChild(elm);
         }
         elm = null;
     },
+    /*
+     * Sets text in a document element on a given id
+     * @param {String} el The element the innerHTML should be set
+     * @param {String} text The text to set
+     */
     setInnerText : function(el, text) {
+        // because of repeating code check if element is not null
         if(el !== null) {
             el.innerHTML = text;
         }
         el = null;
     },
-    showElement: function(el) {
-            var elm = this.getDomElement(el);
-            elm.classList.add('fadeIn');
-    },
+    /*
+     * Gets a dom element on a given id
+     * @param {String} id The element that should be get
+     */
     getDomElement : function(el) {
         var elm = document.getElementById(el);
         return elm;
     },
-    upDateAnim : function(el, cl) {
+    /*
+     * Update the animation on a dom element by adding and removing a class.
+     * Settimeout being used to delay.
+     * @param {String} el The element the class should be added and removed
+     */
+    upDateAnim : function(el, cssClass) {
+        // because of repeating code check if element is not null
         if(el !== null) {
             if(el.classList !== 0) {
-             el.classList.remove(cl);
+             el.classList.remove(cssClass);
+            }
+
+            setTimeout(function() {
+               el.classList.add(cssClass);
+           }, 1000);
         }
-        setTimeout(function(){
-           el.classList.add(cl);
-       }, 1000);
-    }
     }
 };
 
@@ -97,7 +168,7 @@ var game = {
     gameOver : false,
     level : 1,
     lives : 3,
-    win : 2,
+    win : 5,
     numberLives: '',
     playerSet : false,
     gameOverText : 'Game over',
@@ -188,7 +259,7 @@ Enemy.prototype.update = function(dt) {
  // You should multiply any movement by the dt parameter
 // which will ensure the game runs at the same speed for
 // all computers.
-    var canvas = helper.getCanvas('gameCanvas');
+    var canvas = helper.getDomElement('gameCanvas');
 
     if (this.x < canvas.width) {
         this.x += this.speedfactor * dt * this.speed;
@@ -242,7 +313,7 @@ var Player = function(x, y, collision) {
 };
 
 Player.prototype.render = function() {
-    var canvas = helper.getCanvas('gameCanvas');
+    var canvas = helper.getDomElement('gameCanvas');
 
         if (game.gameOver === false) {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -252,6 +323,7 @@ Player.prototype.render = function() {
         //redraw whole canvas
         helper.redraw(0, 0, canvas.width, canvas.height);
         helper.setText(game.gameOverText, canvas.width, canvas.height, game.primMessageColor, game.primFont);
+        helper.removeEl('meta');
         game.drawStartNewGame();
     }
 
@@ -263,7 +335,7 @@ Player.prototype.render = function() {
      }
 };
 Player.prototype.handleInput = function(direction) {
-        var canvas = helper.getCanvas('gameCanvas'),
+        var canvas = helper.getDomElement('gameCanvas'),
             level = helper.getDomElement('level-number') || 1,
             startText = helper.getDomElement('start-text'),
             config = { attributes: false, childList: true, characterData: true, characterOldData: true },
