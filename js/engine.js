@@ -49,9 +49,10 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-            if(game.playerSet){
-        update(dt);
-        render();
+
+        if(game.playerSet) {
+            update(dt);
+            render();
         }
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -71,11 +72,11 @@ var Engine = (function(global) {
      */
     function init() {
         if(!game.playerSet) {
-            choosePlayer();
+
+            // call choose player if no player is chosen
+            game.choosePlayer();
         }
-
         reset();
-
 
         lastTime = Date.now();
         main();
@@ -107,7 +108,11 @@ var Engine = (function(global) {
             enemy.update(dt);
             player.checkCollisions(enemy, player.collision);
         });
-        player.update();
+        /*
+         * removed function call
+         * player.update();
+         */
+
     }
 
     /* This function initially draws the "game level", it will then call
@@ -149,7 +154,6 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
 
     }
@@ -175,61 +179,6 @@ var Engine = (function(global) {
      */
     function reset() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function choosePlayer() {
-        var playerImages = [
-            'images/char-boy.png',
-            'images/char-cat-girl.png',
-            'images/char-horn-girl.png',
-            'images/char-pink-girl.png',
-            'images/char-princess-girl.png'
-            ];
-
-        helper.createDocumentElement('body', 'div', 'select-players', 'select-players');
-        helper.createDocumentElement('select-players', 'p', 'select-players-text', 'select-players-text', 'Select a player to play the game');
-
-        var selectPlayer = helper.getDomElement('select-players');
-
-        for(var i = 0; i < playerImages.length; i++) {
-            selectPlayer.appendChild(Resources.get(playerImages[i]));
-        }
-
-        //get all imgs
-        var allPlayerImgs = document.getElementsByTagName('img');
-
-        for(var image = 0; image < allPlayerImgs.length; image++) {
-            //attach eventlistener to all images
-            allPlayerImgs[image].addEventListener('click', selectPlayerNow, false);
-        }
-
-
-
-    }
-
-    function selectPlayerNow() {
-        var playerFullUrl = this.src,
-            playerIndx = playerFullUrl.indexOf('images'),
-            playerSubUrl = playerFullUrl.slice(playerIndx, playerFullUrl.length);
-
-        //set player source
-        player.sprite = playerSubUrl;
-        //player selected
-        game.playerSet = true;
-        helper.removeEl('select-players');
-        addGameDescription();
-    }
-
-    function addGameDescription() {
-        var startGameText = game.levelText(game.level, 'Get accross the road and watch the enemies');
-        helper.createDocumentElement('body', 'p', 'start-text', 'start-text', startGameText);
-
-        setTimeout(function(){
-            helper.setClass('start-text', 'fadeOut');
-        }, 3000);
-        if(game.playerSet) {
-            helper.setClass('meta', 'fadeIn');
-        }
     }
 
     /* Go ahead and load all of the images we know we're going to need to
