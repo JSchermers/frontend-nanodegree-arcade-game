@@ -27,3 +27,12 @@ When the player reaches the level set in game.win (set to 5). He/ she has won th
 *	[Paciello group]{http://www.paciellogroup.com/blog/2015/02/html5-canvas-sub-dom/ "Accessible canvas"} - did not implement because canvas was dynamically added.
 *	[Addy Osmani - mutation observers]{http://addyosmani.com/blog/mutation-observers/}
 *	[StackOverflow - contructor.name]{http://stackoverflow.com/questions/3905144/how-to-retrieve-the-constructors-name-in-javascript}
+
+## to do
+
+*	improve collision
+* 	add sounds
+*	add points
+*	improve BigEnemy position
+
+
