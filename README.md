@@ -5,6 +5,21 @@ Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015
 
 for self-checking their submission.
 
+## Game rules
+
+Select a player
+
+When player reaches the water + 1 up arrow he/she reaches the next level and starts at initial position.
+
+When the player reaches the next level an additional BigEnemy is added as well as the three starting enemies.
+
+When the player collides with an enemy  it gets set back at the starting position and one live is substracted.
+
+When there aren't any lives left the gameover screen is drawn. And you can start a new game
+
+When the player reaches the level set in game.win (set to 5). He/ she has won the game and so is drawn. You can then choose to play the game again.
+
+
 #sources used for this game
 
 *	[mdn]{https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/ "canvasApi"}
